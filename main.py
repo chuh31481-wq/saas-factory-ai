@@ -1,16 +1,24 @@
-# main.py (The CrewAI Factory)
+# main.py (FINAL, CORRECTED, CREWAI VERSION)
 import os
 from crewai import Agent, Task, Crew, Process
 from crewai_tools import SerperDevTool, ScrapeWebsiteTool, WebsiteSearchTool
+from langchain_openai import ChatOpenAI # Nayi, zaroori import
 
+# --- API Keys aur Model Configuration ---
+    
 # Apni API keys ko environment variables se load karein
-# Hum inhein GitHub Secrets mein daalenge
 os.environ["SERPER_API_KEY"] = os.getenv("SERPER_API_KEY")
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY") # CrewAI ko chalane ke liye ek LLM key chahiye
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENROUTER_API_KEY") # Hum OpenRouter ki key istemal kar rahe hain
+
+# CrewAI ko batayein ke hum OpenRouter istemal kar rahe hain
+llm = ChatOpenAI(
+    model="mistralai/mistral-7b-instruct:free",
+    base_url="https://openrouter.ai/api/v1"
+)
 
 # --- Hamari AI Team (The Crew) ---
 
-# Agent 1: The Researcher (Research karne wala)
+# Agent 1: The Researcher
 researcher = Agent(
   role='Senior Research Analyst',
   goal='Uncover cutting-edge developments in AI and data science',
@@ -19,17 +27,19 @@ researcher = Agent(
   You have a knack for dissecting complex data and presenting actionable insights.""",
   verbose=True,
   allow_delegation=False,
-  tools=[SerperDevTool(), ScrapeWebsiteTool(), WebsiteSearchTool()] # Internet browsing ke tools
+  tools=[SerperDevTool(), ScrapeWebsiteTool(), WebsiteSearchTool()],
+  llm=llm # Har agent ko batayein ke kaun sa model istemal karna hai
 )
 
-# Agent 2: The Writer (Likhne wala)
+# Agent 2: The Writer
 writer = Agent(
   role='Professional Tech Content Strategist',
   goal='Craft compelling content on tech advancements',
   backstory="""You are a renowned Content Strategist, known for your insightful and engaging articles.
   You transform complex concepts into compelling narratives.""",
   verbose=True,
-  allow_delegation=True
+  allow_delegation=True,
+  llm=llm # Har agent ko batayein ke kaun sa model istemal karna hai
 )
 
 # --- Hamare Tasks (Kaam) ---
@@ -59,12 +69,13 @@ task2 = Task(
 crew = Crew(
   agents=[researcher, writer],
   tasks=[task1, task2],
-  process=Process.sequential # Pehle Task 1 hoga, phir Task 2
+  process=Process.sequential
 )
 
 # Kaam shuru karein!
 result = crew.kickoff()
 
 print("######################")
+print("## FINAL RESULT ##")
+print("######################")
 print(result)
-
