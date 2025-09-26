@@ -1,4 +1,4 @@
-# .github/workflows/run_crew.yml (The AI Factory Supervisor)
+# .github/workflows/run_crew.yml (FINAL, FOOLPROOF VERSION)
 
 name: 'Run AI Crew'
 
@@ -26,8 +26,7 @@ jobs:
 
       - name: Run The AI Crew
         env:
+          # Yahan hum secrets ko bilkul sahi naam se call kar rahe hain
           SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENROUTER_API_KEY }} # Yahan hum OpenRouter ki key daal rahe hain
-          OPENAI_API_BASE: "https://openrouter.ai/api/v1" # CrewAI ko batayein ke OpenAI nahi, OpenRouter se baat karni hai
-          OPENAI_MODEL_NAME: "mistralai/mistral-7b-instruct:free" # 100% Free model
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: python main.py
